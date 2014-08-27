@@ -82,8 +82,10 @@ all: $(PROG)
 $(PROG): $(OBJ)
 	$(ECHO) "LINK $@"
 	$(Q)$(CC) $(COPT) -o $@ $(OBJ) $(LIB) $(LDFLAGS)
+ifndef NOSTRIP
 ifndef DEBUG
 	$(Q)$(STRIP) $(STRIPFLAGS_EXTRA) $(PROG)
+endif
 endif
 	$(Q)$(SIZE) $(PROG)
 
