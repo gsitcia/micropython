@@ -9,7 +9,13 @@
 #include "objtuple.h"
 #include "texture.h"
 
-static mp_obj_t nsp_waitKeypress(mp_obj_t self_in)
+static mp_obj_t nsp_readRTC()
+{
+	return mp_obj_new_int(*(unsigned int*)0x90090000);
+}
+static MP_DEFINE_CONST_FUN_OBJ_0(nsp_readRTC_obj, nsp_readRTC);
+
+static mp_obj_t nsp_waitKeypress()
 {
 	wait_key_pressed();
 	return mp_const_none;
@@ -18,7 +24,8 @@ static MP_DEFINE_CONST_FUN_OBJ_0(nsp_waitKeypress_obj, nsp_waitKeypress);
 
 STATIC const mp_map_elem_t mp_module_nsp_globals_table[] = {
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_Texture), (mp_obj_t) &nsp_texture_type },
-	{ MP_OBJ_NEW_QSTR(MP_QSTR_waitKeypress), (mp_obj_t) &nsp_waitKeypress_obj }
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_waitKeypress), (mp_obj_t) &nsp_waitKeypress_obj },
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_readRTC), (mp_obj_t) &nsp_readRTC_obj }
 };
 
 STATIC const mp_obj_dict_t mp_module_nsp_globals = {
