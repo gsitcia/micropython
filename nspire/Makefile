@@ -16,8 +16,8 @@ QSTR_DEFS = qstrdefsport.h
 UNAME_S := $(shell uname -s)
 
 # Disable stripping of the main executable, relocation info is needed by genzehn
-# DEBUG := 1
 NOSTRIP := 1
+# DEBUG := 1
 
 # include py core make definitions
 include ../py/py.mk
@@ -26,28 +26,22 @@ INC =  -I.
 INC += -I$(PY_SRC)
 INC += -I$(BUILD)
 
-# compiler settings
-CWARN = -Wall -Werror -Wno-error=cpp
-CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 -DUNIX $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
-
 # Debugging/Optimization
 ifdef DEBUG
 CFLAGS += -g
 COPT = -O0
 else
-COPT = -Os -DNDEBUG
+COPT = -O3 -fomit-frame-pointer
 endif
+
+# compiler settings
+CWARN = -Wall -Werror -Wno-error=cpp
+CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
 
 LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio
 
 # source files
-SRC_C = \
-	main.c \
-	gccollect.c \
-	input.c \
-	file.c \
-	modos.c \
-	$(SRC_MOD)
+SRC_C = $(shell find . -name \*.c)
 
 OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
