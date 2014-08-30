@@ -31,14 +31,14 @@ ifdef DEBUG
 CFLAGS += -g
 COPT = -O0
 else
-COPT = -O3 -fomit-frame-pointer
+COPT = -Ofast -fomit-frame-pointer -flto
 endif
 
 # compiler settings
 CWARN = -Wall -Werror -Wno-error=cpp
 CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
 
-LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio
+LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio,-Ofast -Ofast
 
 # source files
 SRC_C = $(shell find . -name \*.c)
