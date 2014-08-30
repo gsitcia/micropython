@@ -51,6 +51,7 @@ Q(sleep)
 //nsp
 Q(nsp)
 Q(waitKeypress)
+Q(readRTC)
 
 //Texture
 Q(Texture)
