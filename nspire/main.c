@@ -60,10 +60,12 @@ uint mp_verbose_flag = 0;
 uint emit_opt = MP_EMIT_OPT_NONE;
 
 #if MICROPY_ENABLE_GC
-// Heap size of GC heap (if enabled)
-// Make it larger on a 64 bit machine, because pointers are larger.
-long heap_size = 128*1024 * (sizeof(mp_uint_t) / 4);
+// 3 MiB 
+long heap_size = 3*1024*1024;
 #endif
+
+static bool should_exit = false;
+static uint exit_val;
 
 // returns standard error codes: 0 for success, 1 for all other errors
 STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, bool is_repl) {
@@ -107,9 +109,12 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         // check for SystemExit
         mp_obj_t exc = (mp_obj_t)nlr.ret_val;
         if (mp_obj_is_subclass_fast(mp_obj_get_type(exc), &mp_type_SystemExit)) {
-            exit(mp_obj_get_int(mp_obj_exception_get_value(exc)));
+			exit_val = mp_obj_get_int(mp_obj_exception_get_value(exc));
+			should_exit = 1;
         }
-        mp_obj_print_exception((mp_obj_t)nlr.ret_val);
+        else
+			mp_obj_print_exception((mp_obj_t)nlr.ret_val);
+
         return 1;
     }
 }
@@ -129,9 +134,9 @@ STATIC char *strjoin(const char *s1, int sep_char, const char *s2) {
 }
 
 STATIC void do_repl(void) {
-    printf("Micro Python " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "; " MICROPY_PY_SYS_PLATFORM " version\n");
+    printf("Micro Python " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE "\n");
 
-    for (;;) {
+    while(!should_exit) {
         char *line = prompt(">>> ");
         if (line == NULL) {
             // EOF
@@ -168,7 +173,6 @@ int main(int argc, char **argv) {
   
     //Disable output buffering, otherwise interactive mode becomes useless
     setbuf(stdout, NULL);
-//    setbuf(stdin, NULL);
   
     cfg_register_fileext("py", "micropython");
   
@@ -176,6 +180,11 @@ int main(int argc, char **argv) {
 
 #if MICROPY_ENABLE_GC
     char *heap = malloc(heap_size);
+    if(!heap)
+    {
+        fprintf(stderr, "Heap allocation failed.");
+	return 1;
+    }
     gc_init(heap, heap + heap_size);
 #endif
 
@@ -217,8 +226,13 @@ int main(int argc, char **argv) {
         wait_key_pressed();
     }
 
+    free(heap);
+
     mp_deinit();
 
+	if(should_exit)
+		return exit_val;
+	
     return ret;
 }
 
