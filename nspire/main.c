@@ -64,6 +64,9 @@ uint emit_opt = MP_EMIT_OPT_NONE;
 long heap_size = 3*1024*1024;
 #endif
 
+void nsp_texture_init();
+void nsp_texture_deinit();
+
 static bool should_exit = false;
 static uint exit_val;
 
@@ -170,7 +173,7 @@ STATIC int do_file(const char *file) {
 }*/
 
 int main(int argc, char **argv) {
-  
+
     //Disable output buffering, otherwise interactive mode becomes useless
     setbuf(stdout, NULL);
   
@@ -187,6 +190,8 @@ int main(int argc, char **argv) {
     }
     gc_init(heap, heap + heap_size);
 #endif
+
+    nsp_texture_init();
 
     mp_init();
 
@@ -229,6 +234,8 @@ int main(int argc, char **argv) {
     free(heap);
 
     mp_deinit();
+
+    nsp_texture_deinit();
 
 	if(should_exit)
 		return exit_val;
