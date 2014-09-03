@@ -333,7 +333,6 @@ static const mp_map_elem_t nsp_texture_locals_dict_table[] = {
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_getPx), (mp_obj_t) &nsp_texture_getPx_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_drawOnto), (mp_obj_t) &nsp_texture_drawOnto_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_delete), (mp_obj_t) &nsp_texture_delete_obj },
-	{ MP_OBJ_NEW_QSTR(MP_QSTR___del__), (mp_obj_t) &nsp_texture_delete_obj }
 };
 
 static MP_DEFINE_CONST_DICT(nsp_texture_locals_dict, nsp_texture_locals_dict_table);
