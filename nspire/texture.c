@@ -408,13 +408,6 @@ static mp_obj_t nsp_texture_setData(mp_obj_t self_in, mp_obj_t str)
 
 	base64decode((const char*) str_data, (unsigned char*)self->bitmap, self->width * self->height * 2);
 
-/*	if(str_len != self->width * self->height * 2)
-	{
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "String doesn't have the correct size (needs to be %d bytes, but is %d bytes)", self->width * self->height * 2, str_len));
-		return mp_const_none;
-	}
-
-	memcpy(self->bitmap, str_data, str_len);*/
 	return mp_const_none;
 }
 
