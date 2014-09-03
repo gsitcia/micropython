@@ -143,7 +143,7 @@ static mp_obj_t nsp_texture_setPx(uint n_args, const mp_obj_t *args)
 {
 	if(mp_obj_get_type(args[0]) != &nsp_texture_type)
 	{
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Wrong type of argument."));
+		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Wrong type of argument."));
 		return mp_const_none;
 	}
 	
@@ -171,7 +171,7 @@ static mp_obj_t nsp_texture_getPx(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in
 	if(x < self->width && y < self->height)
 		return MP_OBJ_NEW_SMALL_INT(self->bitmap[x + y * self->width]);
 	else
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Texture coordinates out of range!"));
+		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Texture coordinates out of range!"));
 	
 	return mp_const_none;
 }
@@ -197,7 +197,7 @@ static mp_obj_t nsp_texture_drawOnto(uint n_args, const mp_obj_t *args, mp_map_t
 	
 	if(mp_obj_get_type(args[0]) != &nsp_texture_type || mp_obj_get_type(args[1]) != &nsp_texture_type)
 	{
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Wrong type of argument."));
+		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Wrong type of argument."));
 		return mp_const_none;
 	}
 	
@@ -336,11 +336,69 @@ static mp_obj_t nsp_texture_drawOnto(uint n_args, const mp_obj_t *args, mp_map_t
 }
 static MP_DEFINE_CONST_FUN_OBJ_KW(nsp_texture_drawOnto_obj, 1, nsp_texture_drawOnto);
 
+/* Base64 decoder from wikipedia */
+
+#define WHITESPACE 64
+#define EQUALS     65
+#define INVALID    66 
+static const unsigned char d[] = {
+    66,66,66,66,66,66,66,66,66,64,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,62,66,66,66,63,52,53,
+    54,55,56,57,58,59,60,61,66,66,66,65,66,66,66, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,66,66,66,66,66,66,26,27,28,
+    29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+    66,66,66,66,66,66
+};
+ 
+int base64decode(const char *in, unsigned char *out, size_t outLen) { 
+    const char *end = in + strlen(in);
+    size_t buf = 1, len = 0;
+ 
+    while (in < end) {
+        unsigned char c = d[(int) *in++];
+ 
+        switch (c) {
+        case WHITESPACE: continue;   /* skip whitespace */
+        case INVALID:    return 1;   /* invalid input, return error */
+        case EQUALS:                 /* pad character, end of data */
+            in = end;
+            continue;
+        default:
+            buf = buf << 6 | c;
+ 
+            /* If the buffer is full, split it into bytes */
+            if (buf & 0x1000000) {
+                if ((len += 3) > outLen) return 1; /* buffer overflow */
+                *out++ = buf >> 16;
+                *out++ = buf >> 8;
+                *out++ = buf;
+                buf = 1;
+            }   
+        }
+    }
+ 
+    if (buf & 0x40000) {
+        if ((len += 2) > outLen) return 1; /* buffer overflow */
+        *out++ = buf >> 10;
+        *out++ = buf >> 2;
+    }
+    else if (buf & 0x1000) {
+        if (++len > outLen) return 1; /* buffer overflow */
+        *out++ = buf >> 4;
+    }
+    return 0;
+}
+
 static mp_obj_t nsp_texture_setData(mp_obj_t self_in, mp_obj_t str)
 {
         if(mp_obj_get_type(self_in) != &nsp_texture_type)
         {
-                nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Wrong type of argument."));
+                nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Wrong type of argument."));
                 return mp_const_none;
         }
 
@@ -348,13 +406,15 @@ static mp_obj_t nsp_texture_setData(mp_obj_t self_in, mp_obj_t str)
 
 	GET_STR_DATA_LEN(str, str_data, str_len)
 
-	if(str_len != self->width * self->height * 2)
+	base64decode((const char*) str_data, (unsigned char*)self->bitmap, self->width * self->height * 2);
+
+/*	if(str_len != self->width * self->height * 2)
 	{
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "String doesn't have the correct size."));
+		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "String doesn't have the correct size (needs to be %d bytes, but is %d bytes)", self->width * self->height * 2, str_len));
 		return mp_const_none;
 	}
 
-	memcpy(self->bitmap, str_data, str_len);
+	memcpy(self->bitmap, str_data, str_len);*/
 	return mp_const_none;
 }
 
@@ -364,7 +424,7 @@ static mp_obj_t nsp_texture_delete(mp_obj_t self_in)
 {
 	if(mp_obj_get_type(self_in) != &nsp_texture_type)
 	{
-		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Wrong type of argument."));
+		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Wrong type of argument."));
 		return mp_const_none;
 	}
 	
