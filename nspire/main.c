@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
     char *heap = malloc(heap_size);
     if(!heap)
     {
-        fprintf(stderr, "Heap allocation failed.");
+	_show_msgbox("Micropython", "Heap allocation failed. Please reboot.", 0);
 	return 1;
     }
     gc_init(heap, heap + heap_size);
