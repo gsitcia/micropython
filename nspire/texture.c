@@ -8,6 +8,7 @@
 #include "gc.h"
 #include "qstr.h"
 #include "obj.h"
+#include "objstr.h"
 #include "runtime.h"
 #include "texture.h"
 
@@ -335,6 +336,30 @@ static mp_obj_t nsp_texture_drawOnto(uint n_args, const mp_obj_t *args, mp_map_t
 }
 static MP_DEFINE_CONST_FUN_OBJ_KW(nsp_texture_drawOnto_obj, 1, nsp_texture_drawOnto);
 
+static mp_obj_t nsp_texture_setData(mp_obj_t self_in, mp_obj_t str)
+{
+        if(mp_obj_get_type(self_in) != &nsp_texture_type)
+        {
+                nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "Wrong type of argument."));
+                return mp_const_none;
+        }
+
+	nsp_texture_obj_t *self = self_in;
+
+	GET_STR_DATA_LEN(str, str_data, str_len)
+
+	if(str_len != self->width * self->height * 2)
+	{
+		nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "String doesn't have the correct size."));
+		return mp_const_none;
+	}
+
+	memcpy(self->bitmap, str_data, str_len);
+	return mp_const_none;
+}
+
+static MP_DEFINE_CONST_FUN_OBJ_2(nsp_texture_setData_obj, nsp_texture_setData);
+
 static mp_obj_t nsp_texture_delete(mp_obj_t self_in)
 {
 	if(mp_obj_get_type(self_in) != &nsp_texture_type)
@@ -363,6 +388,7 @@ static const mp_map_elem_t nsp_texture_locals_dict_table[] = {
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_setPx), (mp_obj_t) &nsp_texture_setPx_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_getPx), (mp_obj_t) &nsp_texture_getPx_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_drawOnto), (mp_obj_t) &nsp_texture_drawOnto_obj },
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_setData), (mp_obj_t) &nsp_texture_setData_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_delete), (mp_obj_t) &nsp_texture_delete_obj },
 };
 
