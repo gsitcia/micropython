@@ -156,8 +156,13 @@ STATIC void do_repl(void) {
             line = line3;
         }
 
-        mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, line, strlen(line), false);
-        execute_from_lexer(lex, MP_PARSE_SINGLE_INPUT, true);
+        if(strcmp("quit", line) == 0) {
+            should_exit = true;
+        } else {
+            mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, line, strlen(line), false);
+            execute_from_lexer(lex, MP_PARSE_SINGLE_INPUT, true);
+        }
+
         free(line);
     }
 }
