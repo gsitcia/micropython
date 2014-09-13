@@ -38,7 +38,7 @@ endif
 CWARN = -Wall -Werror -Wno-error=cpp
 CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
 
-LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio,-Ofast -Ofast
+LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio
 
 # source files
 SRC_C = $(shell find . -name \*.c)

@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
 	_show_msgbox("Micropython", "Heap allocation failed. Please reboot.", 0);
 	return 1;
     }
-    gc_init(heap, heap + heap_size);
+    gc_init(heap, heap + heap_size - 1);
 #endif
 
     nsp_texture_init();
