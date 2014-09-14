@@ -24,7 +24,7 @@
  * t.display()
  * t.delete()
  * 
- * Don't forget to call the delete() function, otherwise memory leaks will occur!
+ * Textures are quite big, so call delete() as early as possible to free heap space.
  * 
  * Available functions:
  * fill(color): Fills the entire texture with color.
