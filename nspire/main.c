@@ -242,20 +242,11 @@ int main(int argc, char **argv) {
 
     nsp_texture_deinit();
 
-	if(should_exit)
-		return exit_val;
+    if(should_exit)
+        return exit_val;
 	
     return ret;
 }
-
-STATIC mp_obj_t mp_sys_exit(uint n_args, const mp_obj_t *args) {
-    int rc = 0;
-    if (n_args > 0) {
-        rc = mp_obj_get_int(args[0]);
-    }
-    nlr_raise(mp_obj_new_exception_arg1(&mp_type_SystemExit, mp_obj_new_int(rc)));
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_sys_exit_obj, 0, 1, mp_sys_exit);
 
 mp_import_stat_t mp_import_stat(const char *path) {
     struct stat st;
