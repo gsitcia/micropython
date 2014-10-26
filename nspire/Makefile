@@ -28,8 +28,7 @@ INC += -I$(BUILD)
 
 # Debugging/Optimization
 ifdef DEBUG
-CFLAGS += -g
-COPT = -O0
+COPT = -O0 -g
 else
 COPT = -Ofast -fomit-frame-pointer -flto
 endif
