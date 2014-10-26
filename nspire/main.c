@@ -236,9 +236,9 @@ int main(int argc, char **argv) {
         wait_key_pressed();
     }
 
-    free(heap);
-
     mp_deinit();
+
+    free(heap);
 
     nsp_texture_deinit();
 
