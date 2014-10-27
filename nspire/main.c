@@ -141,15 +141,14 @@ STATIC void do_repl(void) {
 
     while(!should_exit) {
         char *line = prompt(">>> ");
-        if (line == NULL) {
-            // EOF
-            return;
-        }
+	if(!line)
+		continue;
+
         while (mp_repl_continue_with_input(line)) {
             char *line2 = prompt("... ");
-            if (line2 == NULL) {
+            if (!line2)
                 break;
-            }
+
             char *line3 = strjoin(line, '\n', line2);
             free(line);
             free(line2);

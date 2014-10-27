@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <nspireio/nspireio.h>
 
 #include "mpconfig.h"
 #include "nlr.h"
@@ -39,11 +40,14 @@
 char *prompt(char *p) {
     static char buf[256];
     fputs(p, stdout);
-    char *s = fgets(buf, sizeof(buf), stdin);
-    if (!s) {
+    char *s = nio_fgets(buf, sizeof(buf), nio_get_default());
+    if(!s)
         return NULL;
-    }
+
     int l = strlen(buf);
+    if(l == 0)
+	return NULL;
+
     if (buf[l - 1] == '\n') {
         buf[l - 1] = 0;
     } else {
