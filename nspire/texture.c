@@ -31,6 +31,7 @@
  * display(): The texture is shown on screen. It must have been created with "nsp.Texture(320, 240, None)"!
  * getPx(x, y): Returns the color of the pixel at (x/y). Throws exception if out of bounds.
  * setPx(x, y, color): Sets color of the pixel at (x/y) to color. Throws exception if out of bounds.
+ * setData(str): Writes the data of the base64 string str to the texture, has to be correct size.
  * drawOnto(dest, src_x = 0, src_y = 0, src_w = self.width, src_h = self.height, dest_x = 0, dest_y = 0, dest_w = src_w, dest_h = src_h): Draws part of the texture onto dest.
  * delete(): Frees the allocated memory. Should be done manually.
  */
