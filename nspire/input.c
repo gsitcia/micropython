@@ -44,18 +44,7 @@ char *prompt(char *p) {
     if(!s)
         return NULL;
 
-    int l = strlen(buf);
-    if(l == 0)
-	return NULL;
-
-    if (buf[l - 1] == '\n') {
-        buf[l - 1] = 0;
-    } else {
-        l++;
-    }
-    char *line = malloc(l);
-    memcpy(line, buf, l);
-    return line;
+    return strdup(buf);
 }
 
 STATIC mp_obj_t mp_builtin_input(uint n_args, const mp_obj_t *args) {
