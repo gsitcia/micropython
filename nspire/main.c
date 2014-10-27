@@ -142,7 +142,7 @@ STATIC void do_repl(void) {
     while(!should_exit) {
         char *line = prompt(">>> ");
 	if(!line)
-		continue;
+		return;
 
         while (mp_repl_continue_with_input(line)) {
             char *line2 = prompt("... ");
