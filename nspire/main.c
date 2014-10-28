@@ -53,6 +53,7 @@
 #include "pfenv.h"
 #include "genhdr/py-version.h"
 #include "input.h"
+#include "onkey.h"
 #include "stackctrl.h"
 
 // Command line options, with their defaults
@@ -63,6 +64,7 @@ uint emit_opt = MP_EMIT_OPT_NONE;
 #if MICROPY_ENABLE_GC
 // 3 MiB 
 long heap_size = 3*1024*1024;
+char *heap;
 #endif
 
 void nsp_texture_init();
@@ -178,6 +180,7 @@ STATIC int do_file(const char *file) {
 }*/
 
 int main(int argc, char **argv) {
+    registerOnkey();
 
     //Disable output buffering, otherwise interactive mode becomes useless
     setbuf(stdout, NULL);
@@ -187,7 +190,7 @@ int main(int argc, char **argv) {
     mp_stack_set_limit(32768);
 
 #if MICROPY_ENABLE_GC
-    char *heap = malloc(heap_size);
+    heap = malloc(heap_size);
     if(!heap)
     {
 	_show_msgbox("Micropython", "Heap allocation failed. Please reboot.", 0);
@@ -235,6 +238,8 @@ int main(int argc, char **argv) {
         puts("Press any key to exit.");
         wait_key_pressed();
     }
+
+    unregisterOnkey();
 
     mp_deinit();
 

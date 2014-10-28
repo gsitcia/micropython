@@ -1,0 +1,2 @@
+void registerOnkey();
+void unregisterOnkey();
