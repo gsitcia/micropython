@@ -72,9 +72,9 @@ extern const struct _mp_obj_module_t mp_module_nsp;
 	{ MP_OBJ_NEW_QSTR(MP_QSTR__os), (mp_obj_t) &mp_module_os }, \
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_nsp), (mp_obj_t) &mp_module_nsp }
 
-// type definitions for the specific machine
-typedef int mp_int_t; // must be pointer size
-typedef unsigned int mp_uint_t; // must be pointer size
+typedef int mp_int_t;
+typedef unsigned int mp_uint_t;
+typedef long mp_off_t;
 
 #define BYTES_PER_WORD sizeof(mp_int_t)
 #define MP_SSIZE_MAX INT_MAX
