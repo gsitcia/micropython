@@ -50,6 +50,7 @@
 #include "runtime.h"
 #include "repl.h"
 #include "gc.h"
+#include "pfenv.h"
 #include "genhdr/py-version.h"
 #include "input.h"
 #include "stackctrl.h"
@@ -86,7 +87,7 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         return 1;
     }
 
-    qstr source_name = mp_lexer_source_name(lex);
+    qstr source_name = lex->source_name;
     #if MICROPY_PY___FILE__
     if (input_kind == MP_PARSE_FILE_INPUT) {
         mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(source_name));
@@ -116,7 +117,7 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
 			should_exit = 1;
         }
         else
-			mp_obj_print_exception((mp_obj_t)nlr.ret_val);
+			mp_obj_print_exception(printf_wrapper, NULL, (mp_obj_t)nlr.ret_val);
 
         return 1;
     }
