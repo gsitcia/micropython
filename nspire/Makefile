@@ -23,7 +23,8 @@ NOSTRIP := 1
 include ../py/py.mk
 
 INC =  -I.
-INC += -I$(PY_SRC)
+INC += -I..
+INC += -I../py
 INC += -I$(BUILD)
 
 # Debugging/Optimization

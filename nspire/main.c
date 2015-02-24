@@ -41,7 +41,6 @@
 #include "misc.h"
 #include "qstr.h"
 #include "lexer.h"
-#include "lexerunix.h"
 #include "parse.h"
 #include "obj.h"
 #include "parsehelper.h"
@@ -62,7 +61,7 @@ uint emit_opt = MP_EMIT_OPT_NONE;
 
 #if MICROPY_ENABLE_GC
 // 3 MiB 
-long heap_size = 3*1024*1024;
+long heap_size = 2*1024*1024;
 #endif
 
 void nsp_texture_init();
