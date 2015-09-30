@@ -66,7 +66,7 @@ STATIC mp_import_stat_t stat_dir_or_file(vstr_t *path) {
     if (stat == MP_IMPORT_STAT_DIR) {
         return stat;
     }
-    vstr_add_str(path, ".py");
+    vstr_add_str(path, ".py.tns");
     stat = mp_import_stat(vstr_null_terminated_str(path));
     if (stat == MP_IMPORT_STAT_FILE) {
         return stat;
@@ -368,13 +368,13 @@ mp_obj_t mp_builtin___import__(mp_uint_t n_args, const mp_obj_t *args) {
                     // "Specifically, any module that contains a __path__ attribute is considered a package."
                     mp_store_attr(module_obj, MP_QSTR___path__, mp_obj_new_str(vstr_str(&path), vstr_len(&path), false));
                     vstr_add_char(&path, PATH_SEP_CHAR);
-                    vstr_add_str(&path, "__init__.py");
+                    vstr_add_str(&path, "__init__.py.tns");
                     if (mp_import_stat(vstr_null_terminated_str(&path)) != MP_IMPORT_STAT_FILE) {
-                        vstr_cut_tail_bytes(&path, sizeof("/__init__.py") - 1); // cut off /__init__.py
+                        vstr_cut_tail_bytes(&path, sizeof("/__init__.py.tns") - 1); // cut off /__init__.py.tns
                         mp_warning("%s is imported as namespace package", vstr_str(&path));
                     } else {
                         do_load(module_obj, &path);
-                        vstr_cut_tail_bytes(&path, sizeof("/__init__.py") - 1); // cut off /__init__.py
+                        vstr_cut_tail_bytes(&path, sizeof("/__init__.py.tns") - 1); // cut off /__init__.py.tns
                     }
                 } else { // MP_IMPORT_STAT_FILE
                     do_load(module_obj, &path);
