@@ -79,7 +79,7 @@ static mp_obj_t nsp_texture_make_new(mp_obj_t nobody_cares, uint n_args, uint n_
 	return self;
 }
 
-static void nsp_texture_print(void (*print)(void *env, const char *fmt, ...), void *env, mp_obj_t self_in, mp_print_kind_t kind)
+static void nsp_texture_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind)
 {
 	if(mp_obj_get_type(self_in) != &nsp_texture_type)
 	{
@@ -89,11 +89,11 @@ static void nsp_texture_print(void (*print)(void *env, const char *fmt, ...), vo
 		
 	nsp_texture_obj_t *self = self_in;
 
-	print(env, "Texture (w=%u, h=%u, transparent=", self->width, self->height);
+	mp_printf(print, "Texture (w=%u, h=%u, transparent=", self->width, self->height);
 	if(!self->has_transparency)
-		print(env, "false, ptr=%p)", self->bitmap);
+		mp_printf(print, "false, ptr=%p)", self->bitmap);
 	else
-		print(env, "%u, ptr=%p)", self->transparent_color, self->bitmap);
+		mp_printf(print, "%u, ptr=%p)", self->transparent_color, self->bitmap);
 }
 
 static mp_obj_t nsp_texture_display(mp_obj_t self_in)
@@ -452,7 +452,7 @@ static MP_DEFINE_CONST_DICT(nsp_texture_locals_dict, nsp_texture_locals_dict_tab
 const mp_obj_type_t nsp_texture_type = {
     { &mp_type_type },
     .name = MP_QSTR_Texture,
-	.print = nsp_texture_print,
+    .print = nsp_texture_print,
     .make_new = nsp_texture_make_new,
     .locals_dict = (mp_obj_t)&nsp_texture_locals_dict
 };

@@ -4,7 +4,7 @@ include ../py/mkenv.mk
 CC := nspire-gcc
 LD := arm-none-eabi-ld.gold
 
-ZEHNFLAGS = --name "micropython" --author "micropython team, ported by Fabian Vogt" --notice "Interactive python console" --version 09
+ZEHNFLAGS = --name "micropython" --author "micropython team, ported by Fabian Vogt" --notice "Interactive python console" --version 09 --compress
 
 # define main target
 PROG = micropython

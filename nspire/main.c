@@ -43,14 +43,12 @@
 #include "lexer.h"
 #include "parse.h"
 #include "obj.h"
-#include "parsehelper.h"
 #include "compile.h"
 #include "runtime0.h"
 #include "runtime.h"
 #include "repl.h"
 #include "gc.h"
-#include "pfenv.h"
-#include "genhdr/py-version.h"
+#include "genhdr/mpversion.h"
 #include "input.h"
 #include "stackctrl.h"
 
@@ -70,40 +68,38 @@ void nsp_texture_deinit();
 static bool should_exit = false;
 static uint exit_val;
 
+STATIC void stderr_print_strn(void *env, const char *str, mp_uint_t len) {
+    (void)env;
+    fwrite(str, len, 1, stderr);
+}
+
+const mp_print_t mp_stderr_print = {NULL, stderr_print_strn};
+
 // returns standard error codes: 0 for success, 1 for all other errors
 STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, bool is_repl) {
     if (lex == NULL) {
         return 1;
     }
 
-    mp_parse_error_kind_t parse_error_kind;
-    mp_parse_node_t pn = mp_parse(lex, input_kind, &parse_error_kind);
-
-    if (pn == MP_PARSE_NODE_NULL) {
-        // parse error
-        mp_parse_show_exception(lex, parse_error_kind);
-        mp_lexer_free(lex);
-        return 1;
-    }
-
-    qstr source_name = lex->source_name;
-    #if MICROPY_PY___FILE__
-    if (input_kind == MP_PARSE_FILE_INPUT) {
-        mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(source_name));
-    }
-    #endif
-    mp_lexer_free(lex);
-
-    mp_obj_t module_fun = mp_compile(pn, source_name, emit_opt, is_repl);
-
-    if (module_fun == mp_const_none) {
-        // compile error
-        return 1;
-    }
-
     // execute it
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
+        qstr source_name = lex->source_name;
+        #if MICROPY_PY___FILE__
+            if (input_kind == MP_PARSE_FILE_INPUT) {
+            mp_store_global(MP_QSTR___file__, MP_OBJ_NEW_QSTR(source_name));
+        }
+        #endif
+
+        mp_parse_node_t pn = mp_parse(lex, input_kind);
+
+        mp_obj_t module_fun = mp_compile(pn, source_name, emit_opt, is_repl);
+
+        if (module_fun == mp_const_none) {
+            // compile error
+            return 1;
+        }
+
         mp_call_function_0(module_fun);
         nlr_pop();
         return 0;
@@ -116,7 +112,7 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
 			should_exit = 1;
         }
         else
-			mp_obj_print_exception(printf_wrapper, NULL, (mp_obj_t)nlr.ret_val);
+			mp_obj_print_exception(&mp_stderr_print, exc);
 
         return 1;
     }
