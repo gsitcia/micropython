@@ -72,7 +72,7 @@ STATIC mp_import_stat_t stat_file_py_or_mpy(vstr_t *path) {
     }
 
     #if MICROPY_PERSISTENT_CODE_LOAD
-    vstr_ins_byte(path, path->len - 2, 'm');
+    vstr_ins_byte(path, path->len - 2 - 4, 'm');
     stat = mp_import_stat_any(vstr_null_terminated_str(path));
     if (stat == MP_IMPORT_STAT_FILE) {
         return stat;
@@ -90,7 +90,7 @@ STATIC mp_import_stat_t stat_dir_or_file(vstr_t *path) {
     }
 
     // not a directory, add .py and try as a file
-    vstr_add_str(path, ".py");
+    vstr_add_str(path, ".py.tns");
     return stat_file_py_or_mpy(path);
 }
 
@@ -438,7 +438,7 @@ mp_obj_t mp_builtin___import__(size_t n_args, const mp_obj_t *args) {
                     mp_store_attr(module_obj, MP_QSTR___path__, mp_obj_new_str(vstr_str(&path), vstr_len(&path), false));
                     size_t orig_path_len = path.len;
                     vstr_add_char(&path, PATH_SEP_CHAR);
-                    vstr_add_str(&path, "__init__.py");
+                    vstr_add_str(&path, "__init__.py.tns");
                     if (stat_file_py_or_mpy(&path) != MP_IMPORT_STAT_FILE) {
                         //mp_warning("%s is imported as namespace package", vstr_str(&path));
                     } else {
