@@ -53,7 +53,6 @@
 #include "stackctrl.h"
 
 // Command line options, with their defaults
-uint mp_verbose_flag = 0;
 //uint emit_opt = MP_EMIT_OPT_NATIVE_PYTHON;
 uint emit_opt = MP_EMIT_OPT_NONE;
 
@@ -91,9 +90,9 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         }
         #endif
 
-        mp_parse_node_t pn = mp_parse(lex, input_kind);
+        mp_parse_tree_t pn = mp_parse(lex, input_kind);
 
-        mp_obj_t module_fun = mp_compile(pn, source_name, emit_opt, is_repl);
+        mp_obj_t module_fun = mp_compile(&pn, source_name, emit_opt, is_repl);
 
         if (module_fun == mp_const_none) {
             // compile error
@@ -253,14 +252,6 @@ mp_import_stat_t mp_import_stat(const char *path) {
         }
     }
     return MP_IMPORT_STAT_NO_EXIST;
-}
-
-int DEBUG_printf(const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    int ret = vfprintf(stderr, fmt, ap);
-    va_end(ap);
-    return ret;
 }
 
 void nlr_jump_fail(void *val) {

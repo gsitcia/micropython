@@ -23,6 +23,7 @@ static mp_obj_t nsp_waitKeypress()
 static MP_DEFINE_CONST_FUN_OBJ_0(nsp_waitKeypress_obj, nsp_waitKeypress);
 
 STATIC const mp_map_elem_t mp_module_nsp_globals_table[] = {
+        { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_nsp) },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_Texture), (mp_obj_t) &nsp_texture_type },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_waitKeypress), (mp_obj_t) &nsp_waitKeypress_obj },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_readRTC), (mp_obj_t) &nsp_readRTC_obj }
@@ -41,6 +42,5 @@ STATIC const mp_obj_dict_t mp_module_nsp_globals = {
 
 const mp_obj_module_t mp_module_nsp = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_nsp,
     .globals = (mp_obj_dict_t*) &mp_module_nsp_globals,
 };

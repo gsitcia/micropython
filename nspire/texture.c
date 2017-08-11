@@ -57,7 +57,7 @@ void nsp_texture_deinit()
 	}
 }
 
-static mp_obj_t nsp_texture_make_new(mp_obj_t nobody_cares, uint n_args, uint n_kw, const mp_obj_t *args)
+static mp_obj_t nsp_texture_make_new(const mp_obj_type_t *type_in, size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
 	mp_arg_check_num(n_args, n_kw, 3, MP_OBJ_FUN_ARGS_MAX, true);
 

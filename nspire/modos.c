@@ -83,6 +83,5 @@ STATIC const mp_obj_dict_t mp_module_os_globals = {
 
 const mp_obj_module_t mp_module_os = {
     .base = { &mp_type_module },
-    .name = MP_QSTR__os,
     .globals = (mp_obj_dict_t*)&mp_module_os_globals,
 };
