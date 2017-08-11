@@ -36,12 +36,14 @@ endif
 
 # compiler settings
 CWARN = -Wall -Werror -Wno-error=cpp -Wno-error=format
-CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
+CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA) -D OLD_SCREEN_API
 
 LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio
 
 # source files
 SRC_C = $(shell find . -name \*.c)
+
+SRC_QSTR += $(SRC_C)
 
 OBJ = $(PY_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
