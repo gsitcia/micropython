@@ -37,26 +37,6 @@
  * delete(): Frees the allocated memory. Should be done manually.
  */
 
-void nsp_texture_init()
-{
-	if(!has_colors)
-	{
-		SCREEN_BASE_ADDRESS = malloc(320*240*2);
-		(*(uint32_t*)0xC000001C) = ((*(uint32_t*)0xC000001C) & ~0b1110) | 0b1000; // Switch to 16-bit mode
-	}
-}
-
-void nsp_texture_deinit()
-{
-	if(!has_colors)
-	{
-		(*(uint32_t*)0xC000001C) = ((*(uint32_t*)0xC000001C) & ~0b1110) | 0b0100; // Switch back to 4-bit mode
-		void *buf = SCREEN_BASE_ADDRESS;
-		SCREEN_BASE_ADDRESS = (void*) 0xA4000100;
-		free(buf);
-	}
-}
-
 static mp_obj_t nsp_texture_make_new(const mp_obj_type_t *type_in, size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
 	mp_arg_check_num(n_args, n_kw, 3, MP_OBJ_FUN_ARGS_MAX, true);
@@ -109,15 +89,9 @@ static mp_obj_t nsp_texture_display(mp_obj_t self_in)
 	if(self->width != 320 || self->height != 240 || self->has_transparency)
 		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "The texture must have the dimensions 320x240 without transparency!"));
 	else if(has_colors)
-		memcpy((uint16_t*)SCREEN_BASE_ADDRESS, self->bitmap, 320*240*2);
+		lcd_blit(self->bitmap, SCR_320x240_565);
 	else
-	{
-	        //Flip everything, as 0xFFFF is white on CX, but black on classic
-		uint16_t *ptr = self->bitmap + 320*240, *ptr_inv = ((uint16_t*)SCREEN_BASE_ADDRESS) + 320*240;
-		uint32_t *ptr32 = (uint32_t*)ptr, *ptr_inv32 = (uint32_t*)ptr_inv;
-		while(--ptr32 >= (uint32_t*)self->bitmap)
-			*--ptr_inv32 = ~*ptr32;
-	}
+		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Not implemented in this version"));
 	
 	return mp_const_none;
 }

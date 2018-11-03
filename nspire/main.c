@@ -60,9 +60,6 @@ STATIC uint emit_opt = MP_EMIT_OPT_NONE;
 long heap_size = 1024*1024 * (sizeof(mp_uint_t) / 4);
 #endif
 
-void nsp_texture_init();
-void nsp_texture_deinit();
-
 
 STATIC void stderr_print_strn(void *env, const char *str, size_t len) {
     (void)env;
@@ -245,8 +242,6 @@ MP_NOINLINE int main_(int argc, char **argv) {
     gc_init(heap, heap + heap_size - 1);
 #endif
 
-    nsp_texture_init();
-
     mp_init();
 
     uint path_num = 2;
@@ -295,8 +290,6 @@ MP_NOINLINE int main_(int argc, char **argv) {
     mp_deinit();
 
     free(heap);
-
-    nsp_texture_deinit();
 
     return ret & 0xff;
 }

@@ -36,7 +36,7 @@ endif
 
 # compiler settings
 CWARN = -Wall -Werror -Wno-error=cpp -Wno-error=format
-CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA) -D OLD_SCREEN_API
+CFLAGS = $(INC) $(CWARN) -ansi -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
 
 LDFLAGS = $(LDFLAGS_MOD) -lm $(LDFLAGS_EXTRA) -Wl,--nspireio
 
