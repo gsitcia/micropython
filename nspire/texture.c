@@ -39,22 +39,24 @@
 
 void nsp_texture_init()
 {
-	if(!has_colors)
+	/*if(!has_colors)
 	{
 		SCREEN_BASE_ADDRESS = malloc(320*240*2);
 		(*(uint32_t*)0xC000001C) = ((*(uint32_t*)0xC000001C) & ~0b1110) | 0b1000; // Switch to 16-bit mode
-	}
+	}*/
+	lcd_init(SCR_320x240_565);
 }
 
 void nsp_texture_deinit()
 {
-	if(!has_colors)
+	/*if(!has_colors)
 	{
 		(*(uint32_t*)0xC000001C) = ((*(uint32_t*)0xC000001C) & ~0b1110) | 0b0100; // Switch back to 4-bit mode
 		void *buf = SCREEN_BASE_ADDRESS;
 		SCREEN_BASE_ADDRESS = (void*) 0xA4000100;
 		free(buf);
-	}
+	}*/
+	lcd_init(SCR_TYPE_INVALID);
 }
 
 static mp_obj_t nsp_texture_make_new(mp_obj_t nobody_cares, uint n_args, uint n_kw, const mp_obj_t *args)
@@ -109,7 +111,7 @@ static mp_obj_t nsp_texture_display(mp_obj_t self_in)
 	if(self->width != 320 || self->height != 240 || self->has_transparency)
 		nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "The texture must have the dimensions 320x240 without transparency!"));
 	else if(has_colors)
-		memcpy((uint16_t*)SCREEN_BASE_ADDRESS, self->bitmap, 320*240*2);
+		lcd_blit((void*)(self->bitmap),SCR_320x240_565);/*
 	else
 	{
 	        //Flip everything, as 0xFFFF is white on CX, but black on classic
@@ -117,7 +119,7 @@ static mp_obj_t nsp_texture_display(mp_obj_t self_in)
 		uint32_t *ptr32 = (uint32_t*)ptr, *ptr_inv32 = (uint32_t*)ptr_inv;
 		while(--ptr32 >= (uint32_t*)self->bitmap)
 			*--ptr_inv32 = ~*ptr32;
-	}
+	}*///I do not have a classic nspire
 	
 	return mp_const_none;
 }
