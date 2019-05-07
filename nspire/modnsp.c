@@ -22,10 +22,23 @@ static mp_obj_t nsp_waitKeypress()
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(nsp_waitKeypress_obj, nsp_waitKeypress);
 
+static mp_obj_t nsp_peekMemory(mp_object_t address) {
+	return mp_obj_new_int(*(unsigned volatile int*)(mp_obj_get_uint(address)));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(nsp_peekMemory_obj, nsp_peekMemory);
+
+static mp_obj_t nsp_pokeMemory(mp_object_t address, mp_object_t value) {
+	*(unsigned volatile int*)(mp_obj_get_int(address)) = mp_obj_get_uint(value);
+	return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(nsp_pokeMemory_obj, nsp_pokeMemory);
+
 STATIC const mp_map_elem_t mp_module_nsp_globals_table[] = {
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_Texture), (mp_obj_t) &nsp_texture_type },
 	{ MP_OBJ_NEW_QSTR(MP_QSTR_waitKeypress), (mp_obj_t) &nsp_waitKeypress_obj },
-	{ MP_OBJ_NEW_QSTR(MP_QSTR_readRTC), (mp_obj_t) &nsp_readRTC_obj }
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_readRTC), (mp_obj_t) &nsp_readRTC_obj },
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_peekMemory), (mp_obj_t) &nsp_peekMemory_obj },
+	{ MP_OBJ_NEW_QSTR(MP_QSTR_pokeMemory), (mp_obj_t) &nsp_pokeMemory_obj }
 };
 
 STATIC const mp_obj_dict_t mp_module_nsp_globals = {
