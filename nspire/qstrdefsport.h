@@ -52,6 +52,8 @@ Q(sleep)
 Q(nsp)
 Q(waitKeypress)
 Q(readRTC)
+Q(peekMemory)
+Q(pokeMemory)
 
 //Texture
 Q(Texture)

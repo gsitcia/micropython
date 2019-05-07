@@ -23,12 +23,12 @@ static mp_obj_t nsp_waitKeypress()
 static MP_DEFINE_CONST_FUN_OBJ_0(nsp_waitKeypress_obj, nsp_waitKeypress);
 
 static mp_obj_t nsp_peekMemory(mp_obj_t address) {
-	return mp_obj_new_int(*(unsigned volatile int*)(mp_obj_get_uint(address)));
+	return mp_obj_new_int(*(unsigned volatile int*)(mp_obj_get_int(address)));
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(nsp_peekMemory_obj, nsp_peekMemory);
 
 static mp_obj_t nsp_pokeMemory(mp_obj_t address, mp_obj_t value) {
-	*(unsigned volatile int*)(mp_obj_get_int(address)) = mp_obj_get_uint(value);
+	*(unsigned volatile int*)(mp_obj_get_int(address)) = mp_obj_get_int(value);
 	return mp_const_none;
 }
 static MP_DEFINE_CONST_FUN_OBJ_2(nsp_pokeMemory_obj, nsp_pokeMemory);
